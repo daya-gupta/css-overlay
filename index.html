@@ -1,0 +1,153 @@
+<html>
+<body>
+<h1>This is a POC for overlay implementaion...</h1>
+Overlay starts from initiating element (using css animations)..
+
+<style>
+	.custom-image {
+		padding: 20px;
+		height: 150px;
+		cursor: pointer;
+	}
+	.overlay1 {
+		height: 100%;
+		width: 100%;
+		position: fixed;
+		background-color: rgba(50,50,50,.7);
+		top: 0;
+		display:none;
+		z-index: 1;
+	}
+	.overlay1.show {
+		display: block;
+	}
+	.overlay2 {
+		width: 60%;
+		position: fixed;
+		transform: translate(-50%, -50%);
+		top: 50%;
+		left: 50%;
+		animation: myAnimation .7s cubic-bezier(0,.25,0,1);
+		background-color: #fff;
+		padding: 20px;
+		z-index: 2;
+	}
+	@keyframes myAnimation {
+		0% {
+			position: absolute;
+			transform: translate(0%, 0%);
+			top: 0;
+			left: 0;
+			width: 200px;
+		}
+		100% {
+			position: fixed;
+			transform: translate(-50%, -50%);
+			top: 50%;
+			left: 50%;
+			width: 60%;
+		}
+	}
+	.overlay-close-btn {
+	    position: absolute;
+		right: 20px;
+		top: 20px;
+		background: none;
+		cursor: pointer;
+	}
+	.overlay-close-btn:after {
+		content: 'X';
+	}
+	.overlay-image {
+	    width: 100%;
+	}
+</style>
+<div id="overlay">
+	<div class="overlay1">
+	</div>
+</div>
+<script type="text/javascript">
+	var images = [{
+		url: '1.jpg',
+		largeUrl: '1.jpg',
+		name: 'first'
+	},{
+		url: '2.jpg',
+		largeUrl: '2.jpg',
+		name: 'second'
+	},{
+		url: '3.jpg',
+		largeUrl: '3.jpg',
+		name: 'third'
+	}];
+	
+	images.map((item) => {
+		var image = document.createElement('img');
+		image.src=`images/${item.url}`;
+		image.name=item.name;
+		image.setAttribute('class','custom-image');
+		
+		image.setAttribute('data-large-url', `images/${item.largeUrl}`);
+		var imageContainer = document.createElement('div');
+		imageContainer.style = "position: relative; display: inline-block;";
+		
+		//<div class="overlay2">
+			//<button class="overlay-close-btn"></button>
+			//<img class="overlay-image" />
+		//</div>
+		imageContainer.append(image);
+		document.body.append(imageContainer);
+	});
+	
+	/*var overlay1 = document.createElement('div');
+	overlay1.setAttribute('class', 'overlay1');
+	
+	var overlay2 = document.createElement('div')
+	overlay2.setAttribute('class', 'overlay2');
+	
+	var overlayCloseBtn = document.createElement('button');
+	overlayCloseBtn.setAttribute('class', 'overlay-close-btn');
+	
+	var overlayImage = document.createElement('img');
+	overlayImage.setAttribute('class', 'overlay-image');
+	
+	overlay2.append(overlayCloseBtn);
+	overlay2.append(overlayImage);
+	overlay1.append(overlay2); */
+	
+	/* var overlay1 = `<div class="overlay1">
+		<div class="overlay2">
+			<button class="overlay-close-btn"></button>
+			<img class="overlay-image" />
+		</div>
+	</div>`;*/
+	
+	function showOverlay(target) {
+		//overlayImage.src = target.getAttribute('data-large-url');
+		//document.querySelector('#overlay').innerHTML = overlay1;
+		
+		var overlayImageContainer = document.createElement('div');
+		overlayImageContainer.setAttribute('class', 'overlay2');
+		overlayImageContainer.innerHTML = `<button class="overlay-close-btn"></button><img class="overlay-image" src=${target.getAttribute('data-large-url')} />`;
+		
+		target.parentNode.append(overlayImageContainer);
+		document.querySelector('.overlay1').classList.add('show');
+	
+		//document.querySelector('.overlay-image').src = target.getAttribute('data-large-url');
+	}
+	
+	document.addEventListener('click', (e) => {
+		if (e.target.classList.contains('custom-image')) {
+			// show overlay
+			showOverlay(e.target);
+		} else if (e.target.classList.contains('overlay-close-btn')) {
+			//document.body.removeChild(overlay1);
+			//document.querySelector('#overlay').innerHTML = '';
+			document.querySelector('.overlay2').remove();
+			document.querySelector('.overlay1').classList.remove('show');
+		}
+	})
+
+</script>
+</body>
+</html>
